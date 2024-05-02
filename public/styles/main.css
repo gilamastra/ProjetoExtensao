@@ -1,0 +1,43 @@
+:root {
+   --title-color: #322153;
+   --primary-color: #652d99;
+}
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+html {
+   font-family: Roboto, sans-serif;
+}
+
+body {
+   background: #f0f0f5;
+   -webkit-font-smoothing: antialiased;
+}
+
+a {
+   text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+   font-family: Ubuntu, sans-serif;
+   color: var(--title-color);
+}
+footer {
+   background-color: #652d99;
+   color: white;
+   text-align: center;
+   padding: 20px 0;
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   width: 100vw;
+}
