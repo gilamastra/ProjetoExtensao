@@ -4,54 +4,58 @@
 
 {% block title %}
 <title>Resultado da pesquisa</title>
-
 {% endblock title %}
 
 {% block styles %}
 <link rel="stylesheet" href="/styles/search-results.css">
-
 {% endblock styles %}
-
 {% block content %}
 {% include "partials/page-header.html" %}
 
 <main>
-
    {% if total > 0 %}
-
-   <h4>
-      <strong>{{total}} pontos</strong>
-      encontrados
-   </h4>
+   <h4><strong>{{ total }} pontos</strong> encontrados</h4>
 
    <div class="cards">
-
-
       {% for place in places %}
-
       <div class="card">
-         <img src="{{ place.image }}" alt="{{ place.name }}">
-         <h1>{{ place.name }}</h1>
-         <h3>{{ place.items }}</h3>
-         <p>
-            {{ place.city }}, {{ place.state }}
-            <br />
-            {{ place.address }}
-            <br />
-            {{ place.address2 }}
-         </p>
+
+         <div class="image-container">
+            <img src="{{ place.image if place.image else '/assets/placeholder-image.png' }}" alt="{{ place.name }}"
+               onerror="this.src='/assets/placeholder-image.png';">
+
+            <button class="heart-button" data-id="{{ place.id }}" data-name="{{ place.name }}"
+               data-city="{{ place.city }}" data-state="{{ place.state }}"
+               data-image="{{ place.image if place.image else '/assets/placeholder-image.png' }}">
+               <svg class=" heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                     d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41 1.01 4.13 2.44h1.74C14.09 5.01 15.76 4 17.5 4 20 4 22 6 22 8.5c0 3.78-3.4 6.86-8.55 11.18L12 21z" />
+               </svg>
+            </button>
+
+         </div>
+
+         <div class="card-body">
+            <h2>{{ place.name }}</h2>
+            <h3>{{ place.items }}</h3>
+            <p>
+               {{ place.city }}, {{ place.state }}<br />
+               {{ place.address }}<br />
+               {{ place.address2 }}
+            </p>
+         </div>
       </div>
-
       {% endfor %}
-
    </div>
 
-   {%else%}
-
+   {% else %}
    <h4><strong>Nenhum</strong> local encontrado</h4>
-
    {% endif %}
-
-
 </main>
 {% endblock content %}
+
+
+{% block scripts %}
+<script src="/scripts/favorites.js"></script>
+{% endblock scripts %}

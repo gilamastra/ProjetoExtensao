@@ -1,21 +1,105 @@
 <div id="modal" class="hide">
-    <div class="content">
-        <div class="header">
-            <h1>Pontos de Coleta</h1>
-            <a href="#">Fechar</a>
-        </div>
-        <form action="/search">
-            <label for="search">Cidade</label>
-            <div class="search field">
-                <input 
-                type="text" 
-                name="search"
-                placeholder="Pesquise por cidade"
-                >
-                <button>
-                    <img src="/assets/search.svg" alt="Buscar">
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+   <form action="/search" onsubmit="return handleSubmit(event)">
+      <label for="city">Cidade</label>
+      <div class="search field" style="position: relative;">
+         <input type="text" name="city" id="city" placeholder="Pesquise por cidade" autocomplete="off"
+            oninput="handleInput(this.value)" />
+         <button type="submit">
+            <img src="/assets/search.svg" alt="Buscar" />
+         </button>
+         <ul id="autocomplete-list" class="autocomplete-list"></ul>
+      </div>
+   </form>
+   <div />
+
+   <style>
+      .autocomplete-list {
+         position: absolute;
+         top: 100%;
+         left: 0;
+         right: 0;
+         max-height: 200px;
+         overflow-y: auto;
+         background: white;
+         border: 1px solid #ccc;
+         z-index: 10;
+         list-style: none;
+         padding: 0;
+         margin: 0;
+         border-radius: 4px;
+      }
+
+      .autocomplete-list li {
+         padding: 8px 12px;
+         cursor: pointer;
+         transition: background 0.2s ease;
+      }
+
+      .autocomplete-list li:hover {
+         background-color: #f2f2f2;
+      }
+   </style>
+
+   <script>
+      let cidades = [];
+
+      // Busca as cidades do IBGE uma vez
+      fetch("https://servicodados.ibge.gov.br/api/v1/localidades/municipios")
+         .then((res) => res.json())
+         .then((data) => {
+            cidades = data.map((cidade) => cidade.nome);
+         })
+         .catch((err) => {
+            console.error("Erro ao carregar cidades:", err);
+         });
+
+      function handleInput(value) {
+         const list = document.getElementById("autocomplete-list");
+         list.innerHTML = "";
+
+         if (!value.trim()) return;
+
+         const filtradas = cidades
+            .filter((nome) => nome.toLowerCase().startsWith(value.toLowerCase()))
+            .slice(0, 10); // Limita a 10 sugestões
+
+         filtradas.forEach((cidade) => {
+            const item = document.createElement("li");
+            item.textContent = cidade;
+            item.onclick = () => {
+               document.getElementById("city").value = cidade;
+               list.innerHTML = "";
+            };
+            list.appendChild(item);
+         });
+      }
+
+      function handleSubmit(e) {
+         console.log(e, 'e')
+         e.preventDefault();
+
+         const cidade = document.getElementById('city').value;
+
+         if (!cidade || !cidades.includes(cidade)) {
+            alert("Por favor, selecione uma cidade válida da lista.");
+            return false;
+         }
+
+         // Encode primeiro (cuida de acentos, apóstrofos, etc)
+         let cidadeFormatada = encodeURIComponent(cidade);
+
+         // Substitui %20 por + (como desejado)
+         cidadeFormatada = cidadeFormatada.replace(/%20/g, '+');
+
+         // Monta a URL
+         window.location.href = `/search?search=${cidadeFormatada}`;
+      }
+
+
+      // Fecha a lista de autocomplete se clicar fora
+      document.addEventListener("click", (e) => {
+         if (!e.target.closest(".search.field")) {
+            document.getElementById("autocomplete-list").innerHTML = "";
+         }
+      });
+   </script>

@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% set pageId = "page-favorites" %}
+
+{% block styles %}
+<link rel="stylesheet" href="/styles/favorites.css">
+{% endblock styles %}
+
+{% block content %}
+<div class="content">
+   <header>
+      <h1>Meus pontos favoritos</h1>
+      <a class="back-link" href="/">
+         <span></span>
+         Voltar para a home
+      </a>
+   </header>
+
+   <main>
+      <div class="empty" id="empty-msg">
+         <img src="/assets/empty-heart.svg" alt="Sem favoritos">
+         <h2>Nenhum ponto favorito ainda</h2>
+         <p>Salve pontos de coleta e eles aparecerão aqui ✨</p>
+      </div>
+
+      <ul class="favorite-list" id="favorite-list" style="display: none;"></ul>
+   </main>
+
+   {% include "partials/page-footer.html" %}
+</div>
+
+{% block scripts %}
+<script>
+   document.addEventListener("DOMContentLoaded", () => {
+      const favoriteIds = JSON.parse(localStorage.getItem('favorites')) || [];
+
+      const emptyMsg = document.getElementById('empty-msg');
+      const list = document.getElementById('favorite-list');
+
+      if (favoriteIds.length === 0) {
+         emptyMsg.style.display = 'block';
+         list.style.display = 'none';
+         return;
+      }
+
+      emptyMsg.style.display = 'none';
+      list.style.display = 'block';
+
+      // Evita duplicação de elementos
+      list.innerHTML = '';
+
+      fetch(`/api/favorites?ids=${favoriteIds.join(',')}`)
+         .then(res => res.json())
+         .then(data => {
+            data.forEach(place => {
+               const li = document.createElement('li');
+               li.className = 'favorite-card';
+               li.innerHTML = `
+               <div class="favorite-card-header">
+                  <h3>${place.name}</h3>
+                  <button
+                     class="remove-btn heart-button active"
+                     data-id="${place.id}"
+                     title="Remover dos favoritos">
+                     ❤️‍🩹
+                  </button>
+               </div>
+               <p>${place.address} - ${place.city}</p>
+            `;
+               list.appendChild(li);
+            });
+
+            // Adiciona os event listeners nos botões adicionados dinamicamente
+            document.querySelectorAll(".heart-button").forEach(button => {
+               button.addEventListener("click", () => {
+                  toggleFavorite(button);
+
+                  // Remove o card da tela se ele for desmarcado
+                  if (!button.classList.contains('active')) {
+                     button.closest('li').remove();
+                  }
+
+                  // Se não sobrar nenhum favorito, mostra a mensagem
+                  const remaining = JSON.parse(localStorage.getItem("favorites")) || [];
+                  if (remaining.length === 0) {
+                     emptyMsg.style.display = 'block';
+                     list.style.display = 'none';
+                  }
+               });
+            });
+         });
+   });
+
+</script>
+{% endblock %}
+{% endblock content %}

@@ -35,8 +35,6 @@
    margin-right: 16px;
    display: flex;
 
-   background-image: url("../assets/log-in.svg");
-
    width: 20px;
    height: 20px;
 }
@@ -108,4 +106,35 @@
    flex: 1;
    color: white;
    text-align: center;
+}
+
+#page-home .header-actions {
+   display: flex;
+   gap: 16px;
+   align-items: center;
+}
+
+.favorite-link {
+   display: flex;
+   align-items: center;
+   font-weight: 700;
+   color: var(--title-color);
+   transition: filter 0.2s;
+}
+
+.favorite-link:hover {
+   filter: brightness(1.2);
+}
+
+.favorite-link .heart-icon {
+   margin-right: 12px;
+   background-image: url("../assets/heart.svg"); /* coloque o ícone aqui */
+   background-repeat: no-repeat;
+   background-size: contain;
+   width: 20px;
+   height: 20px;
+}
+
+.create-point-link span {
+   background-image: url("../assets/log-in.svg");
 }
