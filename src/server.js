@@ -12,9 +12,13 @@ server.use(express.urlencoded({ extended: true }));
 
 // utilizando template engine
 const nunjucks = require("nunjucks");
-nunjucks.configure("src/views", {
+const env = nunjucks.configure("src/views", {
    express: server,
    noCache: true,
+});
+// Adiciona o filtro `tojson`
+env.addFilter("tojson", function (obj) {
+   return JSON.stringify(obj);
 });
 
 // configurar caminhos da minha aplicação
@@ -26,17 +30,10 @@ server.get("/", (req, res) => {
 });
 
 server.get("/create-point", (req, res) => {
-   // req.query: Query Strings da nossa url
-   // console.log(req.query)
-
    return res.render("create-point.html");
 });
 
 server.post("/savepoint", (req, res) => {
-   // req.body: O corpo do nosso formulário
-   // console.log(req.body)
-
-   // inserir dados no banco de dados
    const query = `
         INSERT INTO places (
             image,
@@ -61,12 +58,8 @@ server.post("/savepoint", (req, res) => {
 
    function afterInsertData(err) {
       if (err) {
-         console.log(err);
          return res.send("Erro no cadastro!");
       }
-
-      console.log("Cadastrado com sucesso");
-      console.log(this);
 
       return res.render("create-point.html", { saved: true });
    }
@@ -107,13 +100,13 @@ server.get("/api/favorites", (req, res) => {
 
    if (!ids) return res.json([]);
 
-   const placeholders = ids
-      .split(",")
-      .map(() => "?")
-      .join(",");
+   // Remove duplicatas dos IDs
+   const uniqueIds = [...new Set(ids.split(","))];
+
+   const placeholders = uniqueIds.map(() => "?").join(",");
    const query = `SELECT * FROM places WHERE id IN (${placeholders})`;
 
-   db.all(query, ids.split(","), function (err, rows) {
+   db.all(query, uniqueIds, function (err, rows) {
       if (err) {
          console.error(err);
          return res.json([]);

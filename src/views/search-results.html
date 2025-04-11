@@ -24,6 +24,10 @@
             <img src="{{ place.image if place.image else '/assets/placeholder-image.png' }}" alt="{{ place.name }}"
                onerror="this.src='/assets/placeholder-image.png';">
 
+            <button class="route-button"
+               onclick="openRoute('{{ place.address }}, {{ place.city }}, {{ place.state }}')">
+               📍 Ver rota no Google Maps
+            </button>
             <button class="heart-button" data-id="{{ place.id }}" data-name="{{ place.name }}"
                data-city="{{ place.city }}" data-state="{{ place.state }}"
                data-image="{{ place.image if place.image else '/assets/placeholder-image.png' }}">
@@ -37,7 +41,8 @@
          </div>
 
          <div class="card-body">
-            <h2>{{ place.name }}</h2>
+            <h2 style="cursor: pointer;"
+               onclick="openRoute('{{ place.address }}, {{ place.city }}, {{ place.state }}')">{{ place.name }}</h2>
             <h3>{{ place.items }}</h3>
             <p>
                {{ place.city }}, {{ place.state }}<br />
@@ -47,6 +52,7 @@
          </div>
       </div>
       {% endfor %}
+
    </div>
 
    {% else %}
@@ -58,4 +64,10 @@
 
 {% block scripts %}
 <script src="/scripts/favorites.js"></script>
+<script>
+   function openRoute(endereco) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(endereco)}`;
+      window.open(url, '_blank');
+   }
+</script>
 {% endblock scripts %}

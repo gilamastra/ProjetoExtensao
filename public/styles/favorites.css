@@ -63,18 +63,21 @@
 /* Lista de favoritos (ativa quando tiver favoritos salvos) */
 
 .favorite-list {
-   display: grid;
-   grid-template-columns: 1fr 1fr;
+   display: grid !important;
+   grid-template-columns: 2fr 2fr !important;
    gap: 24px;
 }
 
 .favorite-card {
-   background: white;
+   transition: opacity 0.3s ease, transform 0.3s ease;
+   background-color: var(--light-background); /* Cor de fundo suave */
    border-radius: 8px;
-   padding: 24px;
-   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-   transition: 0.2s;
-   margin-bottom: 24px;
+   margin-bottom: 20px;
+   padding: 15px;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+   overflow: hidden;
+   display: flex;
+   flex-direction: column;
 }
 
 .favorite-card h3 {
@@ -112,4 +115,109 @@
 
 .remove-btn:hover {
    color: #ff1f1f;
+}
+
+/* Ajustando a imagem e layout geral do card */
+
+/* Ajustando o tamanho da imagem */
+.favorite-card-image {
+   width: 100%;
+   height: 300px; /* Ajuste para a altura da imagem */
+   object-fit: cover; /* Garante que a imagem se ajuste sem distorcer */
+   border-radius: 8px;
+   margin-bottom: 10px;
+}
+
+/* Efeito de hover nos itens */
+.favorite-card:hover {
+   background-color: rgb(235, 235, 235);
+   transform: scale(1.02);
+}
+
+/* Cabeçalho e título do card */
+.favorite-card-header h3 {
+   color: var(--primary-color); /* Roxo escuro para o título */
+   font-size: 18px;
+   margin-bottom: 8px;
+}
+/* Cabeçalho e título do card */
+.favorite-card-header h2 {
+   color: black;
+   cursor: pointer;
+}
+.favorite-card-header h2:hover {
+   color: var(--primary-color);
+   transition: 0.25s;
+}
+
+/* Estilo do botão de remoção */
+.favorite-card-header .remove-btn {
+   background-color: var(--primary-color); /* Roxo escuro */
+   color: var(--white);
+   border: none;
+   border-radius: 50%;
+   padding: 10px;
+   cursor: pointer;
+   transition: background-color 0.3s ease;
+}
+
+.favorite-card-header .remove-btn:hover {
+   background-color: #4b1b70; /* Roxo mais escuro no hover */
+}
+
+.favorite-card.removed {
+   opacity: 0;
+   transform: scale(0.9);
+   transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.feedback-msg {
+   position: fixed;
+   top: 20px;
+   right: 20px;
+   background-color: #4caf50; /* Verde para feedback positivo */
+   color: #fff;
+   padding: 15px 25px;
+   border-radius: 10px;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+   opacity: 0;
+   transition: opacity 0.5s ease, transform 0.5s ease;
+   font-size: 16px;
+   font-weight: bold;
+   z-index: 1000; /* Para garantir que sobreponha outros elementos */
+   transform: translateY(
+      -30px
+   ); /* Inicia um pouco acima para animação de entrada */
+}
+
+.feedback-msg.show {
+   opacity: 1;
+   transform: translateY(
+      0
+   ); /* Animação de "entrar" de cima para baixo */
+}
+
+.feedback-msg.error {
+   background-color: #ff5733; /* Cor vermelha para erro */
+}
+
+.feedback-msg.success {
+   background-color: #28a745; /* Cor verde para sucesso */
+}
+
+.route-button {
+   margin-top: auto;
+   padding: 20px 16px;
+   background-color: var(--primary-color);
+   border: none;
+   border-radius: 8px;
+   color: white;
+   cursor: pointer;
+   font-weight: bold;
+   transition: background-color 0.3s ease;
+   font-size: 18px;
+}
+
+.route-button:hover {
+   background-color: #4c1a69;
 }

@@ -1,10 +1,15 @@
 <div id="modal" class="hide">
+
+   <button id="hide_modal" onclick="document.getElementById('modal').classList.add('hide')" aria-label="Fechar modal">
+      &times;
+   </button>
+
    <form action="/search" onsubmit="return handleSubmit(event)">
       <label for="city">Cidade</label>
       <div class="search field" style="position: relative;">
          <input type="text" name="city" id="city" placeholder="Pesquise por cidade" autocomplete="off"
             oninput="handleInput(this.value)" />
-         <button type="submit">
+         <button style="cursor: pointer;" type="submit">
             <img src="/assets/search.svg" alt="Buscar" />
          </button>
          <ul id="autocomplete-list" class="autocomplete-list"></ul>
@@ -13,6 +18,23 @@
    <div />
 
    <style>
+      #hide_modal {
+         position: absolute;
+         top: 10px;
+         right: 10px;
+         background: transparent;
+         border: none;
+         font-size: 58px;
+         color: #ffffff;
+         cursor: pointer;
+         z-index: 20;
+         transition: color 0.2s ease;
+      }
+
+      #hide_modal:hover {
+         color: var(--secondary-color);
+      }
+
       .autocomplete-list {
          position: absolute;
          top: 100%;
@@ -75,7 +97,6 @@
       }
 
       function handleSubmit(e) {
-         console.log(e, 'e')
          e.preventDefault();
 
          const cidade = document.getElementById('city').value;

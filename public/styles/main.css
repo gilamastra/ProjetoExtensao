@@ -1,6 +1,11 @@
 :root {
    --title-color: #322153;
    --primary-color: #652d99;
+   --primary-color: #652d99; /* Roxo escuro */
+   --secondary-color: #e1faec; /* Verde claro */
+   --light-background: #f4f4f4; /* Fundo claro */
+   --light-green: #b8f1d5; /* Verde suave */
+   --white: #ffffff; /* Branco */
 }
 
 * {

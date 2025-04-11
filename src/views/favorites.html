@@ -26,14 +26,67 @@
       <ul class="favorite-list" id="favorite-list" style="display: none;"></ul>
    </main>
 
+   <div id="remove-feedback" class="feedback-msg" style="display: none;">
+      Ponto removido dos favoritos!
+   </div>
+
    {% include "partials/page-footer.html" %}
 </div>
+{% endblock content %}
 
 {% block scripts %}
 <script>
+   function removeFavorite(button) {
+      const id = button.dataset.id;
+      const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+      const updatedFavorites = favorites.filter(favId => favId !== id);
+      localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+
+      const listItem = button.closest('li');
+      listItem.classList.add('removed');
+
+      setTimeout(() => {
+         listItem.remove();
+      }, 300);
+
+      const remainingFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+      const emptyMsg = document.getElementById('empty-msg');
+      const list = document.getElementById('favorite-list');
+
+      if (remainingFavorites.length === 0) {
+         emptyMsg.style.display = 'block';
+         list.style.display = 'none';
+      }
+
+      showFeedbackMessage();
+   }
+
+   function openRoute(button) {
+      const address = button.dataset.address || '';
+      const address2 = button.dataset.address2 || '';
+      const city = button.dataset.city || '';
+      const state = button.dataset.state || '';
+
+      const fullAddress = `${address}, ${address2}, ${city}, ${state}`;
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`;
+      window.open(url, '_blank');
+   }
+
+   function showFeedbackMessage() {
+      const feedback = document.getElementById("remove-feedback");
+      feedback.style.display = "block";
+      feedback.classList.add("show");
+
+      setTimeout(() => {
+         feedback.classList.remove("show");
+         setTimeout(() => {
+            feedback.style.display = "none";
+         }, 300);
+      }, 2000);
+   }
+
    document.addEventListener("DOMContentLoaded", () => {
       const favoriteIds = JSON.parse(localStorage.getItem('favorites')) || [];
-
       const emptyMsg = document.getElementById('empty-msg');
       const list = document.getElementById('favorite-list');
 
@@ -46,51 +99,70 @@
       emptyMsg.style.display = 'none';
       list.style.display = 'block';
 
-      // Evita duplicação de elementos
-      list.innerHTML = '';
-
       fetch(`/api/favorites?ids=${favoriteIds.join(',')}`)
          .then(res => res.json())
          .then(data => {
+            const seenIds = new Set();
+
             data.forEach(place => {
-               const li = document.createElement('li');
-               li.className = 'favorite-card';
-               li.innerHTML = `
-               <div class="favorite-card-header">
-                  <h3>${place.name}</h3>
-                  <button
-                     class="remove-btn heart-button active"
-                     data-id="${place.id}"
-                     title="Remover dos favoritos">
-                     ❤️‍🩹
-                  </button>
-               </div>
-               <p>${place.address} - ${place.city}</p>
-            `;
-               list.appendChild(li);
+               if (!seenIds.has(place.id)) {
+                  seenIds.add(place.id);
+
+                  const li = document.createElement('li');
+                  li.className = 'favorite-card';
+                  li.innerHTML = `
+                     <div class="favorite-card-image">
+                        <img 
+                           src="${place.image || '/assets/placeholder-image.png'}" 
+                           alt="${place.name}" 
+                           class="favorite-card-image" />
+                     </div>
+                     
+                     <div class="favorite-card-header">
+                        <div>
+                           <h2
+                                          data-address="${place.address || ''}"
+                        data-address2="${place.address2 || ''}"
+                        data-city="${place.city || ''}"
+                        data-state="${place.state || ''}"
+                        onclick="openRoute(this)"
+                  ">
+                           
+                           
+                           ${place.name}</h2>
+                           <h3>${place.items}</h3>
+                        </div>
+                        <button
+                           class="remove-btn heart-button active"
+                           data-id="${place.id}"
+                           title="Remover dos favoritos">
+                           ❤️‍🩹
+                        </button>
+                     </div>
+                     <p>${place.address2}</p>
+                     <p>${place.address}</p>
+                     <p>${place.city} - ${place.state}</p>
+
+                     <button 
+                        class="route-button"
+                        data-address="${place.address || ''}"
+                        data-address2="${place.address2 || ''}"
+                        data-city="${place.city || ''}"
+                        data-state="${place.state || ''}"
+                        onclick="openRoute(this)">
+                       📍 Ver rota no Google Maps
+                     </button>
+                  `;
+                  list.appendChild(li);
+               }
             });
 
-            // Adiciona os event listeners nos botões adicionados dinamicamente
             document.querySelectorAll(".heart-button").forEach(button => {
                button.addEventListener("click", () => {
-                  toggleFavorite(button);
-
-                  // Remove o card da tela se ele for desmarcado
-                  if (!button.classList.contains('active')) {
-                     button.closest('li').remove();
-                  }
-
-                  // Se não sobrar nenhum favorito, mostra a mensagem
-                  const remaining = JSON.parse(localStorage.getItem("favorites")) || [];
-                  if (remaining.length === 0) {
-                     emptyMsg.style.display = 'block';
-                     list.style.display = 'none';
-                  }
+                  removeFavorite(button);
                });
             });
          });
    });
-
 </script>
-{% endblock %}
-{% endblock content %}
+{% endblock scripts %}

@@ -128,7 +128,7 @@ main h4 {
 
 .image-container img {
    width: 100%;
-   height: auto;
+   height: 300px;
    display: block;
    border-radius: 8px;
 }
@@ -161,4 +161,21 @@ main h4 {
 .heart-button.active .heart-icon {
    fill: #e53935;
    stroke: #e53935;
+}
+
+.route-button {
+   margin-top: 12px;
+   background-color: var(--primary-color);
+   color: white;
+   border: none;
+   padding: 10px 16px;
+   border-radius: 8px;
+   cursor: pointer;
+   font-size: 14px;
+   transition: background-color 0.3s ease;
+   margin-left: 14px;
+}
+
+.route-button:hover {
+   background-color: #4c1a69;
 }

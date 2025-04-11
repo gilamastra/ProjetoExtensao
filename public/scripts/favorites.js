@@ -1,5 +1,4 @@
 function toggleFavorite(button) {
-   console.log(button, "adsad");
    const id = button.dataset.id;
 
    const favorites =
@@ -20,7 +19,6 @@ function toggleFavorite(button) {
 
 // Ao carregar a página, marcar os favoritos e adicionar os listeners
 document.addEventListener("DOMContentLoaded", () => {
-   console.log(" das dsa ");
    const favorites =
       JSON.parse(localStorage.getItem("favorites")) || [];
 
